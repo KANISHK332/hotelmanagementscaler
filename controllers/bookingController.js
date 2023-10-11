@@ -27,7 +27,7 @@ exports.bookRoom = async (req, res) => {
 
   const message = `Your room ${room.roomNumber} is booked from ${req.body.startTime} to ${req.body.endTime}. Total price: ${price} Rs.`;
 
-  await sendEmail({
+  sendEmail({
     email: req.body.userEmail,
     subject: "Room Booking Confirmation",
     message,
@@ -55,9 +55,9 @@ exports.editBooking = async (req, res) => {
 
   const message = `Your room booking is updated. Room ${room.roomNumber} from ${req.body.startTime} to ${req.body.endTime}. Total price: ${price} Rs.`;
 
-  await sendEmail({
+  sendEmail({
     email: req.body.userEmail,
-    subject: "Room Booking Confirmation",
+    subject: "Room Booking Updation",
     message,
   });
 
@@ -67,6 +67,7 @@ exports.editBooking = async (req, res) => {
 exports.cancelBooking = async (req, res) => {
   const booking = await Booking.findById(req.params.id);
   if (booking) {
+    const usermail = booking.userEmail;
     const hoursBeforeStart =
       (new Date(booking.startTime) - new Date()) / (1000 * 60 * 60);
     let refund = 0;
@@ -84,9 +85,9 @@ exports.cancelBooking = async (req, res) => {
 
     const message = `Your room booking is cancelled. Refund amount: ${refund} Rs.`;
 
-    await sendEmail({
-      email: req.body.userEmail,
-      subject: "Room Booking Confirmation",
+    sendEmail({
+      email: usermail,
+      subject: "Room Booking Cancelation",
       message,
     });
 

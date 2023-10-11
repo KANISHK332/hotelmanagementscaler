@@ -52,8 +52,8 @@ function RoomsTable() {
     console.log(roomDetails);
     const res = addRoom(roomDetails);
     console.log(res);
+    await getAllRooms();
     closeModal();
-    getAllRooms();
   }
 
   return (
@@ -96,6 +96,7 @@ function RoomsTable() {
               <label className="modalLabel">Room Type</label>
               {/* a dropdown which has three types A, B, C */}
               <select name="roomType" onChange={handleChange}>
+              <option value="">Select a room</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="C">C</option>

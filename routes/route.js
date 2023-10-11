@@ -9,7 +9,7 @@ router.post('/rooms', roomController.addRoom);
 
 router.get('/bookings', bookingController.getAllBookings);
 router.post('/bookings', checkAvailability, bookingController.bookRoom);
-router.put('/bookings/:id', checkAvailability, bookingController.editBooking);
+router.put('/bookings/:id', bookingController.editBooking);
 router.delete('/bookings/:id', bookingController.cancelBooking);
 
 module.exports = router;

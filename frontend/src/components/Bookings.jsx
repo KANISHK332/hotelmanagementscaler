@@ -38,6 +38,7 @@ function Bookings() {
   });
   const [actionType, setActionType] = useState("add");
   const [bookingId, setBookingId] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const getAllBookings = async () => {
     const data = await getBookings();
@@ -82,8 +83,11 @@ function Bookings() {
 
   const createNewBooking = async (e) => {
     e.preventDefault();
+    console.log(actionType);
     if (actionType === "add") {
+      setLoading(true);
       const res = await addBooking(bookingDetails);
+      setLoading(false);
       console.log(res);
       if (res.error) {
         toast.error(res.error);
@@ -91,20 +95,24 @@ function Bookings() {
         toast.success("reservation added");
       }
     } else {
+      setLoading(true);
       const res = await updateBooking(bookingDetails, bookingId);
+      setLoading(false);
       console.log(res);
-      if (res.error) {
-        toast.error(res.error);
-      } else {
+      // if (res.error) {
+      //   toast.error(res.error);
+      // } else {
         toast.success("reservation updated");
-      }
+      // }
     }
+    await getAllBookings();
     closeModal();
-    getAllBookings();
   };
 
   const cancelBooking = async (id) => {
+    setLoading(true);
     const res = await deleteBooking(id);
+    setLoading(false);
     if (res) {
       toast.success("reservation deleted");
     }
@@ -113,10 +121,15 @@ function Bookings() {
   };
 
   const updateBookingFunc = async (id) => {
+    await setActionType("update");
     setBookingId(id);
     openModal();
-    setActionType("update");
   };
+
+  const addBookingFunc = async () => {
+    setActionType("add");
+    openModal();
+  }
 
   useEffect(() => {
     getAllRooms();
@@ -168,7 +181,7 @@ function Bookings() {
         </div>
 
         <div className="bookBtn">
-          <button onClick={openModal}>Book Room</button>
+          <button onClick={addBookingFunc}>Book Room</button>
         </div>
       </div>
       <Modal
@@ -180,7 +193,7 @@ function Bookings() {
         <h2 className="bkModalAdd">
           {actionType === "add" ? "Add Booking" : "Update Booking"}
         </h2>
-        <form className="modalForm" onSubmit={createNewBooking}>
+        <form className="modalForm">
           <div className="bkInput">
             <label className="modalLabel">Email:</label>
             <input
@@ -232,8 +245,8 @@ function Bookings() {
             />
           </div>
           <div className="bkInput">
-            <button type="submit" className="sbmtModal">
-              {actionType === "add" ? "Add Booking" : "Update Booking"}
+            <button onClick={createNewBooking} className="sbmtModal">
+              {actionType === "add" ? (loading ? "Adding..." : "Add Booking") : (loading ? "Updating..." : "Update Booking")}
             </button>
             <button type="button" className="sbmtModal" onClick={closeModal}>
               Cancel
